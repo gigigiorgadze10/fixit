@@ -156,6 +156,7 @@ MVP = ყველა **Must have** story, ჯამში **9 story / 31 ქუ
 ```
 README.md                  აღწერა, stakeholder-ები, NFR, MoSCoW, DoD, MVP
 BACKLOG.md                 ყველა story სრული Acceptance Criteria-თი
+ARCHITECTURE.md            არქიტექტურა: სტილი, დიაგრამა, pattern-ები, API, ბაზა, სტეკი, რისკები
 backlog/stories.json       story-ების მონაცემები (ერთადერთი წყარო)
 backlog/issues/            Issue-ების ტექსტები
 scripts/build_backlog.py   BACKLOG.md-ის და Issue-ების ტექსტების გენერაცია
