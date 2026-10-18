@@ -144,6 +144,9 @@ MVP = ყველა **Must have** story, ჯამში **9 story / 31 ქუ
 
 ## 8. GitHub Projects დაფა
 
+**დაფა:** https://github.com/users/gigigiorgadze10/projects/1
+**Issue-ები:** https://github.com/gigigiorgadze10/fixit/issues
+
 თითოეული story არის ცალკე Issue, რომელსაც აქვს ლეიბლები (`user-story`, MoSCoW კატეგორია, როლი) და დაფაზე ველები **Priority (MoSCoW)** და **Story Points**.
 
 დაფის სვეტები: **Backlog → Ready (MVP) → In Progress → In Review → Done**
@@ -156,4 +159,5 @@ BACKLOG.md                 ყველა story სრული Acceptance Crit
 backlog/stories.json       story-ების მონაცემები (ერთადერთი წყარო)
 backlog/issues/            Issue-ების ტექსტები
 scripts/build_backlog.py   BACKLOG.md-ის და Issue-ების ტექსტების გენერაცია
+scripts/publish_github.py  ლეიბლების, Issue-ების და დაფის შექმნა GitHub-ზე
 ```
