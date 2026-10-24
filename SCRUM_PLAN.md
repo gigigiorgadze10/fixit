@@ -13,7 +13,7 @@
 | MVP მზადაა | Sprint 4-ის ბოლოს, **27 დეკემბერი** (≈ 2 თვე) |
 | ყველა Should | Sprint 6-ის ბოლოს, **24 იანვარი** (≈ 3 თვე) |
 
-თუ გუნდში მუშაობთ (3–4 ადამიანი, ARCHITECTURE.md-ში ასეა დაფიქსირებული), velocity იზრდება და Could have story-ებიც ეტევა. ინდივიდუალური დავალებისთვის გეგმა გათვლილია ერთ ადამიანზე.
+დავალება ინდივიდუალურია, ამიტომ გეგმა გათვლილია ერთ ადამიანზე. თუ პროექტს მომავალში გუნდი შეუერთდება, velocity გაიზრდება და Could have story-ებიც დაეტევა.
 
 ## 2. Scrum როლები
 
@@ -68,18 +68,16 @@ Stakeholder-ების მონაწილეობა (მათი ინ�
 | არტეფაქტი | სად არის |
 |-----------|----------|
 | Product Backlog | GitHub Issues (18 Issue) + [BACKLOG.md](BACKLOG.md) |
-| Sprint Backlog | Project დაფაზე ველი **Sprint** (Iteration, 2 კვირა); თითო სპრინტის story-ები ზემოთ ცხრილშია |
+| Sprint Backlog | Project დაფაზე ველი **Sprint** (Iteration: Sprint 0 = 1 კვირა, Sprint 1–6 = 2 კვირა) და ხედი **Sprint Planning**; თითო სპრინტის story-ები ზემოთ ცხრილშია |
 | Increment | `main` branch, რომელიც გადის CI-ს და გაშლილია staging-ზე |
 | Definition of Done | [README.md](README.md) ნაწილი 6 |
 | Burndown | Project → Insights → Burn up; სკრინშოტი ყოველ Sprint Review-ზე `docs/sprints/sprint-N.md`-ში |
 
 **დაფის სვეტები** (უცვლელია): Backlog → Ready (MVP) → In Progress → In Review → Done.
 
-### Project დაფის დამატებითი ნაბიჯი (ერთჯერადი, ხელით)
+### Project დაფა
 
-1. გახსენი https://github.com/users/gigigiorgadze10/projects/1 → Settings → **New field** → სახელი `Sprint`, ტიპი **Iteration**, ხანგრძლივობა 2 კვირა, დაწყება 2 ნოემბერი.
-2. ყველა Issue-ს მიანიჭე Sprint ზემოთ მოცემული ცხრილის მიხედვით (Sprint 1: US-01, US-02 და ა.შ.).
-3. შექმენი ხედი **Sprint Board** (Board layout, ფილტრი `iteration:@current`) და ხედი **Roadmap** (Roadmap layout, Iteration-ით).
+დაფაზე უკვე არის ველი **Sprint** (7 სპრინტი, 26 ოქტომბერი 2026 – 24 იანვარი 2027), story-ებს სპრინტები მინიჭებული აქვთ ზემოთ ცხრილის მიხედვით, ხოლო ხედი **Sprint Planning** აჩვენებს Status-ს, Sprint-ს და Story Points-ს. Could have და Won't have story-ებს (US-07, US-15, US-16, US-17, US-18) სპრინტი ჯერ არ აქვთ.
 
 ## 6. რისკები (Scrum-ის კუთხით)
 
