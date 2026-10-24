@@ -156,7 +156,7 @@ MVP = ყველა **Must have** story, ჯამში **9 story / 31 ქუ
 თითოეული story არის ცალკე Issue, რომელსაც აქვს ლეიბლები (`user-story`, MoSCoW კატეგორია, როლი) და დაფაზე ველები **Priority (MoSCoW)**, **Story Points** და **Sprint** (Iteration, იხ. [SCRUM_PLAN.md](SCRUM_PLAN.md)).
 
 დაფის სვეტები: **Backlog → Ready (MVP) → In Progress → In Review → Done**
-ხედები: **Backlog Board** (კანბანი) და **Sprint Planning** (ცხრილი: Status, Sprint, Story Points).
+ხედები: **Sprint Board** (Scrum-ის Sprint Backlog-ის დაფა: სვეტები სტატუსის მიხედვით, ფილტრი მიმდინარე სპრინტზე) და **Sprint Planning** (ცხრილი: Status, Priority, Sprint, Story Points).
 
 ## რეპოზიტორიის სტრუქტურა
 
