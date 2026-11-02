@@ -1,318 +1,197 @@
 # FixIt — Software Architecture
 
-**პრაქტიკული 2 · სცენარი D: საკუთარი იდეა**  
-**არქიტექტურული სტილი:** Layered Modular Monolith  
-**Backend:** ASP.NET Core 10 MVC + REST API Controllers  
-**Frontend:** Razor Views + Bootstrap 5  
-**Database:** PostgreSQL
+**Overall Architecture:** Client–Server  
+**Backend Architecture:** Layered Modular Monolith  
+**Mobile:** React Native + Expo + TypeScript  
+**Web Dashboard:** Next.js App Router + TypeScript  
+**Backend:** ASP.NET Core 10 Web API  
+**Database:** PostgreSQL + PostGIS
 
-## 1. არქიტექტურული სტილის არჩევა
+## 1. არქიტექტურული გადაწყვეტილება
 
-FixIt-ისთვის არჩეულია **Layered Modular Monolith** - ერთი deployable ASP.NET Core აპლიკაცია, რომელშიც პასუხისმგებლობები ფენებად და ბიზნესმოდულებად არის დაყოფილი.
+FixIt-ს აქვს ორი განსხვავებული კლიენტი, რომლებიც ერთ Backend-ს იყენებენ. მოქალაქე და საველე თანამშრომელი ძირითადად ტელეფონით მუშაობენ: მათ სჭირდებათ კამერა, GPS, რუკა და ადგილზე დავალების განახლება. დისპეჩერსა და ადმინისტრატორს კი სჭირდებათ დიდი ეკრანის ცხრილები, ფილტრები და მართვის ფორმები. ამიტომ ერთ Responsive Web UI-ზე დაყრდნობის ნაცვლად ვირჩევთ Native Mobile App-ს და ცალკე Web Dashboard-ს.
 
-ეს სტილი არჩეულია შემდეგი მიზეზებით:
+Backend არის ერთი deployable ASP.NET Core Web API აპლიკაცია, რომლის შიდა პასუხისმგებლობები ფენებად და ბიზნესმოდულებად არის გამოყოფილი (Layered Modular Monolith).
 
-1. **MVP-ის მასშტაბი:** სისტემა თავდაპირველად ერთი მუნიციპალიტეტის სამუშაო პროცესს ემსახურება. ცალკეული microservice-ების განთავსება, ქსელური კომუნიკაცია და დამოუკიდებელი მონაცემთა ბაზები MVP-ისთვის ზედმეტ სირთულეს შექმნიდა.
-2. **მონაცემთა თანმიმდევრულობა:** განაცხადის სტატუსის ცვლილება, დავალების მინიჭება და სტატუსის ისტორიის ჩანაწერი ერთ PostgreSQL ტრანზაქციაში შეიძლება შესრულდეს.
-3. **შენარჩუნებადობა და გაფართოება:** Identity, Reports, Dispatch, Tasks, Attachments და Notifications ლოგიკურად გამოყოფილი მოდულებია. თუ დატვირთვა ან ორგანიზაციული საჭიროება გაიზრდება, კონკრეტული მოდულის გამოყოფა მომავალში შესაძლებელი იქნება.
+### რატომ ეს არქიტექტურა?
 
-**რატომ არა Microservices:** MVP-ის ფუნქციონალი ჯერ მცირე და მჭიდროდ დაკავშირებულია. Microservices მოიტანს დამატებით deployment-ს, service-to-service კომუნიკაციას, distributed tracing-სა და consistency პრობლემებს, რომლებიც ამ ეტაპზე ბიზნესღირებულებას არ მატებს.
+1. **მომხმარებლის საჭიროება:** Citizen-სა და Worker-ს სჭირდებათ კამერა, GPS და სწრაფი საველე სამუშაო; React Native + Expo უზრუნველყოფს Android/iOS აპლიკაციას. Dispatcher/Admin-ის ცხრილური სამუშაო Next.js Web Dashboard-ზე უფრო მოსახერხებელია.
+2. **ერთიანი ბიზნესლოგიკა და მონაცემები:** ორივე კლიენტი ერთ API-ს იყენებს, ამიტომ განაცხადის შექმნის, მინიჭებისა და სტატუსის წესები ერთ ადგილას სრულდება. ერთი PostgreSQL ტრანზაქცია იცავს სტატუსისა და ისტორიის თანმიმდევრულობას.
+3. **სემესტრის მასშტაბი:** ორი კლიენტის მიუხედავად, ერთი Backend და ერთი მონაცემთა ბაზა მართვადია. მიკროსერვისების დამოუკიდებელი deployment და distributed consistency ამ ეტაპზე ზედმეტი სირთულე იქნებოდა.
+
+**რატომ არა მხოლოდ Responsive Web/PWA:** ვებაპლიკაცია შეიძლება მობილურზე გაიხსნას, მაგრამ პროდუქტის მიზანია ინსტალირებადი Android/iOS კლიენტი, რომელსაც აქვს კამერის, GPS-ისა და მოწყობილობის უსაფრთხო საცავის ინტეგრაცია. PWA სამომავლო ალტერნატივაა, არა არჩეული MVP.
+
+**რატომ არა Microservices:** Reports, Assignments, StatusHistory და Attachments მჭიდროდ დაკავშირებული use case-ებია. ერთ მონოლითში მათი ტრანზაქციული კოორდინაცია უფრო მარტივია. თუ მომავალი დატვირთვა და ორგანიზაციული საჭიროება მოითხოვს, მოდულების გამოყოფა შეიძლება ცალკე ADR-ით.
 
 ## 2. კომპონენტების დიაგრამა
 
 ```mermaid
 flowchart TB
-    subgraph USERS["მომხმარებლები"]
-        CIT["Citizen"]
-        MGR["Manager / Dispatcher"]
-        WRK["Worker / Brigade"]
-        ADM["Admin"]
+    CIT[Citizen] --> MOB
+    WRK[Field Worker] --> MOB
+    DSP[Dispatcher / Manager] --> WEB
+    ADM[Admin] --> WEB
+
+    subgraph CLIENTS[Client Applications]
+      MOB[React Native + Expo<br/>Android / iOS]
+      WEB[Next.js Web Dashboard]
     end
 
-    subgraph WEB["Client Layer"]
-        BROWSER["Mobile / Desktop Browser"]
-        LEAF["Leaflet Map UI"]
+    MOB -->|HTTPS / REST / Bearer token| API
+    WEB -->|HTTPS / REST / Cookie| API
+
+    subgraph BACKEND[ASP.NET Core 10 Web API - Layered Modular Monolith]
+      API[API Controllers / DTO Validation]
+      APP[Application Services / Use Cases]
+      ID[Identity & Access]
+      REP[Reports]
+      DSPM[Dispatch & Assignments]
+      WF[Tasks & Status Workflow]
+      CAT[Departments & Categories]
+      ATT[Attachments]
+      API --> APP
+      APP --> ID
+      APP --> REP
+      APP --> DSPM
+      APP --> WF
+      APP --> CAT
+      APP --> ATT
     end
 
-    CIT --> BROWSER
-    MGR --> BROWSER
-    WRK --> BROWSER
-    ADM --> BROWSER
-    BROWSER --> LEAF
-
-    subgraph APP["ASP.NET Core 10 — Layered Modular Monolith"]
-        MVC["MVC Controllers + Razor Views"]
-        API["REST API Controllers /api/v1"]
-        AUTH["Identity & Access Module"]
-        REPORTS["Reports Module"]
-        DISPATCH["Dispatch Module"]
-        TASKS["Tasks & Status Workflow Module"]
-        CATALOG["Departments & Categories Module"]
-        MEDIA["Attachments Module"]
-        NOTIFY["Notification Service"]
-        SERVICES["Application Services"]
-        DATA["EF Core / DbContext"]
-
-        MVC --> SERVICES
-        API --> SERVICES
-        SERVICES --> AUTH
-        SERVICES --> REPORTS
-        SERVICES --> DISPATCH
-        SERVICES --> TASKS
-        SERVICES --> CATALOG
-        SERVICES --> MEDIA
-        SERVICES --> NOTIFY
-        AUTH --> DATA
-        REPORTS --> DATA
-        DISPATCH --> DATA
-        TASKS --> DATA
-        CATALOG --> DATA
-    end
-
-    BROWSER -->|"HTTPS"| MVC
-    BROWSER -->|"HTTPS / JSON"| API
-    LEAF -->|"Map tiles"| OSM["OpenStreetMap tile provider"]
-    MEDIA --> STORAGE[("Private Object Storage")]
-    DATA --> DB[("PostgreSQL")]
-    NOTIFY -.-> EMAIL["Email provider / SMTP"]
+    APP --> DB[(PostgreSQL + PostGIS)]
+    ATT --> OBJ[(Private Object Storage)]
+    MOB --> DEVICE[Camera / GPS / Secure Storage]
+    MOB -. optional future .-> PUSH[Push Provider]
 ```
 
-რუკის ფილები მიეწოდება გარე OpenStreetMap ინფრასტრუქტურიდან. FixIt ინახავს კოორდინატებს და არ უნდა იყოს დამოკიდებული იმაზე, რომ მესამე მხარის რუკის ფილები ყოველთვის ხელმისაწვდომია.
+Push Provider MVP-ში არ შედის. Web Dashboard იყენებს Cookie სესიას, Mobile — Bearer token-ს; ორივე ერთ API-ს უკავშირდება.
 
-## 3. ფენები და მოდულები
+## 3. Backend-ის ფენები და მოდულები
 
-| ფენა / მოდული | პასუხისმგებლობა |
-|---|---|
-| Presentation | MVC Controllers, Razor Views, REST API Controllers, ViewModels და Request/Response DTO-ები. |
-| Application | Use case-ები და ბიზნესოპერაციები: CreateReport, AssignReport, UpdateTaskStatus, CompleteTask. |
-| Domain | Report, ReportStatus, Category, Department და სტატუსების დაშვებული გადასვლების წესები. |
-| Infrastructure | EF Core, PostgreSQL, ASP.NET Identity, File Storage adapter, email adapter და ლოგირება. |
+| ფენა | პასუხისმგებლობა | მაგალითები |
+|---|---|---|
+| Presentation | HTTP მოთხოვნების მიღება, DTO ვალიდაცია, ავტორიზაციის ატრიბუტები, პასუხის კოდები | ReportsController, ManagerReportsController, WorkerTasksController |
+| Application | use case-ები და ორკესტრაცია | CreateReport, AssignWorker, StartTask, CompleteTask |
+| Domain | ბიზნესობიექტები და ინვარიანტები | Report, Assignment, ReportStatusRules |
+| Infrastructure | ტექნიკური ინტეგრაციები | EF Core, PostgreSQL/PostGIS, Identity, S3 storage, email adapter |
 
-მოდულები:
+ბიზნესმოდულები:
 
-- **Identity & Access:** რეგისტრაცია, შესვლა, როლები და წვდომის პოლიტიკა.
-- **Reports:** განაცხადის შექმნა, დეტალები, საკუთარი განაცხადების სია.
-- **Dispatch:** შემოსული განაცხადების ფილტრაცია, მიღება/უარყოფა და თანამშრომელზე მინიჭება.
-- **Tasks:** თანამშრომლის დავალებები, `InProgress` სტატუსი და დასრულება.
-- **Catalog:** უწყებები და პრობლემის კატეგორიები.
-- **Attachments:** ფოტოების ტიპის, ზომისა და ფორმატის შემოწმება; EXIF-ის მოცილება; Object Storage.
-- **Notifications:** სტატუსის ცვლილების შემდეგ ელფოსტის გაგზავნა (Should Have ფუნქცია).
+- **Identity & Access:** რეგისტრაცია, login, refresh/logout, როლები და resource-level authorization.
+- **Reports:** განაცხადის შექმნა, მოქალაქის განაცხადების სია და დეტალები.
+- **Dispatch & Assignments:** დისპეჩერის სამუშაო დაფა, მინიჭება და დასაშვები ხელახალი მინიჭება.
+- **Tasks & Workflow:** Worker-ის დავალებები და სტატუსების კონტროლი.
+- **Departments & Categories:** უწყებები, კატეგორიები და Service Area-ები.
+- **Attachments:** ფოტოს ვალიდაცია, EXIF მოცილება და private object storage.
+- **Notifications:** ელფოსტა — US-05, Should Have; push — მომავალი გაფართოება.
 
 ## 4. Backend Design Patterns
 
-### 4.1 Service Layer
+### 4.1 Service Layer / Use Case
 
-Controller არ შეიცავს ბიზნესლოგიკას. ის ამოწმებს HTTP მოთხოვნის ფორმას, იძახებს Application Service-ს და აბრუნებს შესაბამის HTTP პასუხს.
+Controller არ შეიცავს ბიზნესლოგიკას. ის ვალიდაციასა და უფლებებს ამოწმებს, იძახებს შესაბამის Application Service-ს და აბრუნებს HTTP პასუხს. მაგალითად, `AssignWorkerService` ამოწმებს Report-ის სტატუსს, Manager-ის Department-სა და Worker-ის აქტიურობას.
 
-მაგალითად, `AssignmentService` ამოწმებს განაცხადის არსებობას, მიმდინარე სტატუსს, მენეჯერის უფლებამოსილებასა და თანამშრომლის აქტიურობას; შემდეგ ტრანზაქციაში ქმნის მინიჭებას და წერს სტატუსის ისტორიას.
+### 4.2 State Transition Policy
 
-### 4.2 Repository + Unit of Work
+`ReportStatusRules` ცენტრალიზებულად განსაზღვრავს სტატუსის დასაშვებ გადასვლებს. MVP: `New → Accepted → InProgress → Resolved`; ასევე Manager-ს შეუძლია `New → Rejected` მხოლოდ მაშინ, როცა US-10 განხორციელდება. `Resolved`-იდან ხელახლა გახსნა MVP-ში შეუძლებელია; US-20 მომავალში ცალკე ReopenRequest პროცესს ამატებს.
 
-Repository პასუხისმგებელია მონაცემთა წვდომის კონკრეტულ ოპერაციებზე, ხოლო EF Core `DbContext` უზრუნველყოფს Unit of Work-ს. ერთი `SaveChangesAsync()`-ის ფარგლებში შესაძლებელია განაცხადის და ისტორიის ჩანაწერის ერთობლივი შენახვა.
+### 4.3 Unit of Work
 
-### 4.3 State Transition Policy
-
-MVP-ში ცალკე კლასების რთული State pattern-ის ნაცვლად გამოიყენება ცენტრალიზებული `ReportStatusRules`, რომელიც განსაზღვრავს დასაშვებ გადასვლებს. ამით Controller-ებში შემთხვევითი `if/else` წესები არ გროვდება.
-
-| მიმდინარე სტატუსი | დაშვებული შემდეგი სტატუსი | ვინ ასრულებს |
-|---|---|---|
-| `New` | `Accepted`, `Rejected` | Manager |
-| `Accepted` | `InProgress` | მინიჭებული Worker |
-| `InProgress` | `Resolved` | მინიჭებული Worker — მხოლოდ დასრულების ფოტოს ატვირთვის შემდეგ |
-| `Resolved` | გადასვლა აღარ არის MVP-ში | — |
-| `Rejected` | გადასვლა აღარ არის MVP-ში | — |
-
-`Resolved → Accepted` გადასვლა MVP-ში არ გამოიყენება. US-16 არის მოქალაქის შეფასება და არა განაცხადის ხელახლა გახსნა.
+EF Core `DbContext`-ის ერთი `SaveChangesAsync`/ტრანზაქცია ერთობლივად ინახავს Report-ის ცვლილებას და StatusHistory-ს. ცალკე Generic Repository არ იქმნება ყველა ცხრილისთვის; გამოიყენება კონკრეტული query/service აბსტრაქციები იქ, სადაც ტესტირებას ან მოდულის იზოლაციას რეალურად ეხმარება.
 
 ### 4.4 Dependency Injection
 
-სერვისები და ინფრასტრუქტურული ადაპტერები ინტერფეისებით მიეწოდება. მაგალითად, `IFileStorage`-ს ლოკალური იმპლემენტაცია გამოიყენება development-ში, ხოლო production-ში შეიძლება S3-compatible storage ჩაერთოს.
+`IFileStorage`, `IEmailSender` და Application Service-ები DI-ით მიეწოდება. Development-ში შეიძლება Local File Storage, ხოლო production-ში private S3-compatible storage.
 
 ## 5. Frontend Design Patterns
 
-FixIt-ის MVP იყენებს ASP.NET Core MVC-სა და Razor Views-ს. ცალკე Next.js აპლიკაცია საჭირო არ არის.
+### 5.1 Mobile — MVVM-inspired + Repository
 
-### 5.1 ViewModel Pattern
+React Native Screens მხოლოდ UI-ს აჩვენებს. ViewModel-ის როლს feature hooks ან view-model classes ასრულებს: მართავს loading/error/data state-სა და მომხმარებლის მოქმედებებს. Repository ფარავს API კომუნიკაციას. UI პირდაპირ fetch/HTTP დეტალებზე არ არის დამოკიდებული.
 
-View იღებს სპეციალურად მომზადებულ ViewModel-ს და არა EF Core Entity-ს. მაგალითად, `ReportDetailsViewModel` შეიცავს მხოლოდ იმ ველებს, რომლებიც კონკრეტულ როლს უნდა გამოუჩნდეს. მოქალაქის ტელეფონი და ელფოსტა საჯარო ViewModel-ში არ შედის.
+```text
+mobile/
+  app/                 # Expo Router screens/routes
+  src/features/
+    auth/              # screens, view-models/hooks, repository
+    reports/           # create/list/details, repository
+    tasks/             # worker tasks, status, completion photo
+  src/shared/
+    api/               # typed API client
+    storage/           # SecureStore wrapper
+    components/
+```
 
-### 5.2 Layout + Partial Views
+### 5.2 Web — Feature-based Architecture
 
-`_Layout.cshtml` აერთიანებს საერთო Header-ს, Navigation-სა და Footer-ს. `_ReportCard.cshtml` და `_StatusBadge.cshtml` მეორდება მოქალაქის, დისპეჩერისა და თანამშრომლის გვერდებზე.
+Next.js Dashboard ფუნქციონალის მიხედვით იყოფა `reports`, `assignments`, `users`, `categories` feature-ებად. საერთო API client, auth guard და დიზაინის კომპონენტები `shared` ნაწილშია. Server Components გამოიყენება საწყისი მონაცემების მიღებისთვის, ხოლო ინტერაქტიული ფილტრები/ფორმები — Client Components-ში.
 
-### 5.3 Progressive Enhancement
+## 6. ავტორიზაცია და უსაფრთხოება
 
-ძირითადი ფორმები მუშაობს server-side validation-ით. რუკის ნიშნულის შერჩევა და ფილტრის ინტერაქცია მცირე JavaScript-ით უმჯობესდება; JavaScript-ის შეცდომამ არ უნდა გამოიწვიოს სერვერზე წვდომის კონტროლის გვერდის ავლა.
+- საჯარო რეგისტრაცია ქმნის მხოლოდ `Citizen` როლს.
+- Mobile იყენებს ASP.NET Core Identity API-ის Bearer token რეჟიმს; access/refresh token ინახება მოწყობილობის SecureStore-ში. Token განახლება და logout სრულდება Backend-ის შესაბამისი endpoint-ებით.
+- Web Dashboard იყენებს Secure, HttpOnly, SameSite Cookie-ს და state-changing მოთხოვნებზე Anti-Forgery დაცვას.
+- ASP.NET Core Identity-ის ჩაშენებული Bearer token **არ არის JWT**. თუ მომავალში საჭიროა სტანდარტული OAuth2/OIDC ან მესამე მხარის ინტეგრაცია, ცალკე Identity Provider (მაგ. OpenIddict ან შესაბამისი IdP) შეფასდება. MVP-ში ამის დამატება აუცილებელი არ არის.
+- ყველა დაცული მოთხოვნა ამოწმებს role-საც და რესურსის მფლობელობას/უწყებასაც. Frontend-ში ღილაკის დამალვა უსაფრთხოების კონტროლი არ არის.
+- ფაილის ლინკი არ უნდა იყოს მუდმივი public URL; ჩამოტვირთვა გადის ავტორიზებულ endpoint-ზე ან მოკლევადიან signed URL-ზე.
 
-## 6. REST API — ძირითადი Endpoints
+## 7. API — ძირითადი Endpoint-ები
 
-REST API მუშაობს იმავე ASP.NET Core აპლიკაციაში და აბრუნებს JSON-ს. სრული კონტრაქტი მოცემულია [`API_CONTRACT.md`](API_CONTRACT.md)-ში.
+| Method | Endpoint | Access | დანიშნულება |
+|---|---|---|---|
+| POST | `/api/v1/auth/register` | Public | Citizen რეგისტრაცია |
+| POST | `/api/v1/auth/login` | Public | Mobile Bearer ან Web Cookie session |
+| POST | `/api/v1/auth/refresh` | Mobile | access token-ის განახლება |
+| GET | `/api/v1/reports/mine` | Citizen | საკუთარი განაცხადები |
+| POST | `/api/v1/reports` | Citizen | განაცხადის შექმნა + ფოტოები |
+| GET | `/api/v1/manager/reports` | Manager | უწყების განაცხადების სია/ფილტრები |
+| POST | `/api/v1/manager/reports/{id}/assignment` | Manager | Worker-ზე მინიჭება/ნებადართული გადანაწილება |
+| GET | `/api/v1/worker/tasks` | Worker | საკუთარი დავალებები |
+| PATCH | `/api/v1/worker/tasks/{id}/status` | Assigned Worker | სამუშაოს დაწყება |
+| POST | `/api/v1/worker/tasks/{id}/completion-photo` | Assigned Worker | დასრულების ფოტო და Resolved |
+| GET | `/api/v1/admin/users` | Admin | მომხმარებლების მართვის სია |
+| PATCH | `/api/v1/admin/users/{id}/role` | Admin | როლის შეცვლა |
 
-| # | Method | Endpoint | როლი | დანიშნულება |
-|---:|---|---|---|---|
-| 1 | `POST` | `/api/v1/auth/register` | Public | Citizen ანგარიშის შექმნა |
-| 2 | `POST` | `/api/v1/auth/login` | Public | ავტორიზაცია |
-| 3 | `POST` | `/api/v1/reports` | Citizen | განაცხადის შექმნა (multipart/form-data, 1–3 ფოტო) |
-| 4 | `GET` | `/api/v1/reports/mine` | Citizen | საკუთარი განაცხადების სია |
-| 5 | `GET` | `/api/v1/manager/reports` | Manager | განაცხადების სია და ფილტრები |
-| 6 | `POST` | `/api/v1/manager/reports/{id}/assignment` | Manager | თანამშრომელზე მინიჭება |
-| 7 | `GET` | `/api/v1/worker/tasks` | Worker | საკუთარ თავზე მინიჭებული დავალებები |
-| 8 | `PATCH` | `/api/v1/worker/tasks/{id}/status` | Worker | დავალების დაწყება (`InProgress`) |
-| 9 | `POST` | `/api/v1/worker/tasks/{id}/completion-photo` | Worker | დასრულების ფოტოს ატვირთვა და `Resolved` სტატუსზე გადასვლა |
-| 10 | `GET` | `/api/v1/map/reports` | Public | საჯარო რუკის მინიმალური, პირადი მონაცემებისგან დაცლილი მონაცემები (Could/Should scope) |
+სრული კონტრაქტი და დამატებითი Should/Could endpoint-ები: [`API_CONTRACT.md`](API_CONTRACT.md).
 
-API მოთხოვნები იყენებს DTO-ებს. Entity Framework Entity პირდაპირ არ ბრუნდება HTTP პასუხში. Role authorization სრულდება სერვერზე, არა მხოლოდ Frontend-ის მენიუში.
-
-## 7. სტატუსის ძირითადი ნაკადი
+## 8. სტატუსის ნაკადი
 
 ```mermaid
 stateDiagram-v2
-    [*] --> New
-    New --> Accepted: Manager accepts
-    New --> Rejected: Manager rejects
-    Accepted --> InProgress: Assigned Worker starts
-    InProgress --> Resolved: Completion photo uploaded
-    Rejected --> [*]
-    Resolved --> [*]
+  [*] --> New
+  New --> Accepted: Manager assigns Worker
+  New --> Rejected: Manager rejects (US-10)
+  Accepted --> InProgress: Assigned Worker starts
+  InProgress --> Resolved: Completion photo saved
+  Rejected --> [*]
+  Resolved --> [*]
 ```
 
-სტატუსის შეცვლა და `StatusHistory` ჩანაწერის დამატება სრულდება ერთ ტრანზაქციაში. დასრულების ფოტო ინახება და მოწმდება `Resolved`-ზე გადასვლამდე.
+Reassignment წესი: `Accepted` სტატუსში მიმდინარე Assignment იხურება (`EndedAt` შეივსება) და ახალი Assignment იქმნება; `InProgress` სტატუსში გადანაწილება MVP-ში აკრძალულია. `Resolved`-ის ხელახლა გახსნა არის US-20 (Could Have), ცალკე ReopenRequest მოდელით.
 
-## 8. მონაცემთა ბაზა: PostgreSQL
+## 9. მონაცემთა ბაზა და ფაილები
 
-**რატომ SQL და არა NoSQL:** მომხმარებლები, უწყებები, კატეგორიები, განაცხადები, მინიჭებები, ფოტოები და სტატუსების ისტორია დაკავშირებული რელაციური მონაცემებია. Foreign Key-ები და ტრანზაქციები იცავს მონაცემთა მთლიანობას.
+PostgreSQL ინახავს მომხმარებლებს/როლებს, Departments, Categories, ServiceAreas, Reports, Assignments, ReportPhotos და StatusHistory-ს. PostGIS ინახავს ServiceArea საზღვრებსა და Report-ის წერტილს. X=Longitude, Y=Latitude, SRID=4326. ეს საჭიროა US-03-ის მუნიციპალიტეტის საზღვრის შემოწმებისთვის.
 
-MVP-ში გეომონაცემებისთვის საკმარისია `Latitude` და `Longitude` ცალკე სვეტებად. PostGIS არ არის აუცილებელი მხოლოდ რუკაზე წერტილების საჩვენებლად; რთული რადიუსული ან გეოგრაფიული მოთხოვნები შეიძლება მომავალ ვერსიაში დაემატოს.
+ფოტოს ბინარული მონაცემი არ ინახება PostgreSQL-ში. Object Storage ინახავს ფაილს, ხოლო DB — StorageKey, MIME type, ზომა, Kind, UploadedBy და CreatedAt-ს. Storage და PostgreSQL ერთ ACID ტრანზაქციაში ვერ ერთიანდება; ამიტომ ფაილი ჯერ იტვირთება, შემდეგ DB transaction ქმნის მეტამონაცემებს. DB ჩავარდნისას ხდება კომპენსატორული ფაილის წაშლა; პერიოდული cleanup შლის orphan ფაილებს.
 
-ფოტოს ბინარული შიგთავსი არ ინახება PostgreSQL-ში. ბაზაში ინახება `StorageKey`, MIME type, ზომა, ფოტო კატეგორია და ატვირთვის მეტამონაცემები; ფაილი ინახება კერძო Object Storage-ში.
+სრული ERD: [`DATA_MODEL.md`](DATA_MODEL.md).
 
-### ER Diagram
+## 10. Deployment / DevOps
 
-```mermaid
-erDiagram
-    DEPARTMENTS ||--o{ CATEGORIES : owns
-    DEPARTMENTS ||--o{ USERS : employs
-    USERS ||--o{ REPORTS : creates
-    USERS ||--o{ REPORTS : assigned_to
-    CATEGORIES ||--o{ REPORTS : classifies
-    REPORTS ||--o{ REPORT_PHOTOS : contains
-    REPORTS ||--o{ STATUS_HISTORY : records
-    USERS ||--o{ STATUS_HISTORY : changes
-    REPORTS ||--o{ SUPPORTS : receives
-    USERS ||--o{ SUPPORTS : gives
+- Mobile: Expo development build და შემდგომ Android/iOS build pipeline.
+- Web Dashboard: Next.js build/deploy.
+- API + PostgreSQL: Docker Compose local development-ში; production განთავსება ცალკე გარემოში.
+- GitHub Actions: Backend build/test, Frontend lint/typecheck/test, container build.
+- Secrets (DB connection, token keys, storage credentials) არ ინახება Repository-ში; CI/CD secrets/environment variables გამოიყენება.
 
-    USERS {
-      string Id PK
-      string Email UK
-      string FullName
-      string PhoneNumber
-      bigint DepartmentId FK
-      boolean IsActive
-      boolean NotifyByEmail
-    }
-    DEPARTMENTS {
-      bigint Id PK
-      string Name UK
-    }
-    CATEGORIES {
-      bigint Id PK
-      string Name UK
-      bigint DepartmentId FK
-      boolean IsActive
-    }
-    REPORTS {
-      bigint Id PK
-      string Number UK
-      string AuthorId FK
-      bigint CategoryId FK
-      string Description
-      decimal Latitude
-      decimal Longitude
-      string Address
-      string District
-      string Status
-      string AssigneeId FK
-      date DueDate
-      string RejectReason
-      bigint DuplicateOfId FK
-      smallint Rating
-      datetime CreatedAt
-      datetime UpdatedAt
-    }
-    REPORT_PHOTOS {
-      bigint Id PK
-      bigint ReportId FK
-      string StorageKey
-      string Kind
-      string MimeType
-      bigint SizeBytes
-      string UploadedById FK
-      datetime CreatedAt
-    }
-    STATUS_HISTORY {
-      bigint Id PK
-      bigint ReportId FK
-      string FromStatus
-      string ToStatus
-      string ChangedById FK
-      string Comment
-      datetime ChangedAt
-    }
-    SUPPORTS {
-      bigint ReportId PK, FK
-      string UserId PK, FK
-      datetime CreatedAt
-    }
-```
+## 11. ძირითადი არქიტექტურული რისკები
 
-### ძირითადი შეზღუდვები და ინდექსები
+1. **Mobile OS/device fragmentation:** Expo SDK-ის compatible versions pin, Android/iOS რეალურ მოწყობილობაზე smoke tests.
+2. **Geolocation accuracy:** რუკაზე ხელით კორექტირება, geofence server-side PostGIS შემოწმება და GPS permission-ის უარყოფის fallback.
+3. **Storage/DB failure:** compensating delete და orphan cleanup; upload state idempotent operation-ით.
+4. **Personal data in media:** EXIF stripping, private storage, authorized download, logs redaction.
 
-- `Reports.Number` — უნიკალური განაცხადის ნომერი.
-- `Categories.Name` და `Departments.Name` — უნიკალური შესაბამისი კონტექსტის ფარგლებში.
-- `Reports.Latitude` — `-90 … 90`; `Reports.Longitude` — `-180 … 180`.
-- `Reports.Rating` — თუ შევსებულია, უნდა იყოს `1 … 5`.
-- `Supports` — კომპოზიტური Primary Key (`ReportId`, `UserId`), რომ მომხმარებელმა ერთ განაცხადს ერთზე მეტჯერ ვერ დაუჭიროს მხარი.
-- ინდექსი `Reports(AuthorId, CreatedAt)` მოქალაქის სიისთვის.
-- ინდექსი `Reports(Status, CategoryId, CreatedAt)` დისპეჩერის ფილტრებისთვის.
-- ინდექსი `Reports(AssigneeId, Status)` თანამშრომლის დავალებებისთვის.
-- `StatusHistory(ReportId, ChangedAt)` განაცხადის ისტორიისთვის.
+## 12. გაფართოების გზა
 
-## 9. ტექნოლოგიური სტეკი
-
-| ფენა | ტექნოლოგია | გამოყენება |
-|---|---|---|
-| Runtime | .NET 10 LTS | მხარდაჭერილი .NET პლატფორმა |
-| Web | ASP.NET Core MVC + API Controllers | Razor გვერდები და REST API |
-| Frontend | Razor, Bootstrap 5, JavaScript | Responsive UI |
-| Map | Leaflet + OpenStreetMap | რუკა და მდებარეობის არჩევა |
-| ORM | EF Core 10 + Npgsql | მონაცემთა წვდომა |
-| Database | PostgreSQL | რელაციური მონაცემები |
-| Auth | ASP.NET Core Identity | პაროლები, ანგარიშები, როლები |
-| File processing | ImageSharp ან ეკვივალენტური ბიბლიოთეკა | გამოსახულების ვალიდაცია/EXIF-ის მოცილება/შეკუმშვა |
-| Storage | Local dev storage; S3-compatible private object storage production | ფოტოები |
-| Testing | xUnit, WebApplicationFactory, k6 | Unit, integration და load tests |
-| DevOps | Docker, GitHub Actions | reproducible environment და CI |
-
-## 10. უსაფრთხოება და კონფიდენციალურობა
-
-- პაროლები და ანგარიშები იმართება ASP.NET Core Identity-ით; პაროლი არასოდეს ინახება ღია ტექსტით.
-- დაცული ქმედებები მოწმდება `[Authorize]` პოლიტიკით/როლით.
-- Cookie-ზე დაფუძნებულ ბრაუზერულ ავტორიზაციასთან ერთად state-changing მოთხოვნებზე გამოიყენება Anti-Forgery დაცვა.
-- ფაილების ატვირთვისას მოწმდება ზომა, MIME/type და გაფართოება; ფაილი ინახება კერძო საცავში.
-- EXIF მეტამონაცემები იშლება ფოტოს შენახვამდე.
-- საჯარო რუკის პასუხში არ ბრუნდება ავტორის სახელი, ელფოსტა, ტელეფონი ან ფაილის კერძო StorageKey.
-- ლოგებში არ იწერება პაროლი, Cookie, სრული პირადი კონტაქტი ან ფაილის შიგთავსი.
-
-## 11. რისკები
-
-| რისკი | გავლენა | შემცირების გზა |
-|---|---|---|
-| Fat Controller-ები | ბიზნესლოგიკის ტესტირება რთულდება | Controller მხოლოდ HTTP orchestration-ს აკეთებს; ლოგიკა Service Layer-შია. |
-| ფოტოს პერსონალური მეტამონაცემები | პირადი მდებარეობის/მოწყობილობის მონაცემის გაჟონვა | EXIF-ის მოცილება, კერძო საცავი და ავტორიზებული ფაილის მიწოდება. |
-| გარე რუკის სერვისის მიუწვდომლობა | რუკის ფილები არ იტვირთება | კოორდინატები დამოუკიდებლად ინახება; მომხმარებელს აქვს ხელით წერტილის მონიშვნის ალტერნატივა. |
-| პარალელური მინიჭება | ერთი განაცხადი ორჯერ შეიძლება მიენიჭოს | concurrency token/row version და ტრანზაქცია; კონფლიქტზე `409`. |
-| ზედმეტი მოცულობა | MVP-ის დაგვიანება | MoSCoW და 31-ქულიანი MVP; ახალი იდეები ავტომატურად MVP-ში არ შედის. |
-
-## 12. გაფართოების შესაძლებლობები
-
-მომავალში შეიძლება დაემატოს PostGIS, სტატისტიკური Dashboard, საჯარო რუკა, ელფოსტა/Push შეტყობინებები, გეოგრაფიული დუბლიკატების აღმოჩენა და ცალკეული მოდულების დამოუკიდებელ სერვისებად გამოყოფა. ეს შესაძლებლობები MVP-ის სავალდებულო არქიტექტურულ ნაწილად არ ითვლება.
+მომავალში შეიძლება დაემატოს push notifications, public issue map, analytics dashboard, reopen workflow, OIDC provider და საჭიროების შემთხვევაში მოდულის დამოუკიდებელ სერვისად გამოყოფა. ეს შესაძლებლობები MVP-ის ვალდებულება არ არის.

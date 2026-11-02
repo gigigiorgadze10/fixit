@@ -2,107 +2,98 @@
 
 ## 1. მართვის მიდგომა
 
-FixIt-ისთვის გამოყენებულია **Agile როგორც განვითარების საერთო მიდგომა და Kanban როგორც სამუშაო პროცესის მართვის მეთოდი**.
+FixIt იყენებს Agile-ს როგორც განვითარების საერთო მიდგომას და Kanban-ს როგორც სამუშაო ნაკადის მართვის მეთოდს. Agile გვაძლევს ეტაპობრივ მიწოდებასა და უკუკავშირზე რეაგირებას; Kanban კი ვიზუალურად აჩვენებს თითოეული Story-ის მდგომარეობას და ზღუდავს ერთდროულად დაწყებულ სამუშაოს.
 
-Agile უზრუნველყოფს ეტაპობრივ მიწოდებას, უკუკავშირის მიღებასა და მოთხოვნების ცვლილებებთან ადაპტაციას. Kanban აჩვენებს თითოეული User Story-ის მიმდინარე მდგომარეობას, ზღუდავს ერთდროულად დაწყებულ სამუშაოს და ეხმარება გუნდს დავალებების უწყვეტად დასრულებაში.
-
-FixIt-ის ინდივიდუალური Backlog-ისთვის Kanban უფრო მარტივია, ვიდრე Sprint-ებზე დაფუძნებული Scrum გეგმა: სამუშაოს მოცულობა და თანმიმდევრობა შეიძლება შეიცვალოს Sprint-ის საზღვრების გადაკეთების გარეშე.
+ეს ინდივიდუალური პროექტია, ამიტომ Scrum-ის ფიქსირებული Sprint-ები და ყოველდღიური ცერემონიები აუცილებელი არ არის. Backlog შეიძლება განახლდეს სამუშაოს მიმდინარეობისას, ხოლო შესრულება უწყვეტ ნაკადად იმართება.
 
 ## 2. GitHub Project
 
 Project: https://github.com/users/gigigiorgadze10/projects/1  
 Repository: https://github.com/gigigiorgadze10/fixit
 
-### Board Status
+### Status
 
-| Status | განმარტება | როდის გამოიყენება |
-|---|---|---|
-| Backlog | დაგეგმილი, მაგრამ ჯერ დასაწყებად არჩეული სამუშაო | ყველა ახალი Issue თავდაპირველად აქ არის. |
-| Ready | მოთხოვნა დაზუსტებულია და ყველა მნიშვნელოვანი დამოკიდებულება ცნობილია | Story აკმაყოფილებს Definition of Ready-ს. |
-| In Progress | აქტიური შესრულება | რეალურად დაწყებულია კოდის/დოკუმენტის/ტესტის მომზადება. |
-| In Review | შესრულებულია და მოწმდება | მოწმდება Acceptance Criteria, ტესტები და კოდის ხარისხი. |
-| Done | დასრულებულია | ყველა Definition of Done კრიტერიუმი შესრულებულია. |
+| Status | განმარტება |
+|---|---|
+| Backlog | დაგეგმილია, მაგრამ ჯერ დასაწყებად არ შეგვირჩევია ან დამოკიდებულება აკლია |
+| Ready | მოთხოვნა გასაგებია, Acceptance Criteria შემოწმებადია და დამოკიდებულებები ცნობილია |
+| In Progress | აქტიური შესრულება მიმდინარეობს |
+| In Review | ცვლილება მოწმდება Acceptance Criteria-ს, ტესტებისა და უსაფრთხოების მიხედვით |
+| Done | ყველა Definition of Done კრიტერიუმი დაკმაყოფილებულია |
 
 ### Project Fields
 
-| Field | Type | Options / მნიშვნელობა |
+| Field | Type | Values |
 |---|---|---|
-| `Status` | Single Select | Backlog, Ready, In Progress, In Review, Done |
-| `MoSCoW` | Single Select | Must Have, Should Have, Could Have, Won't Have (this time) |
-| `Story Points` | Number | 1, 2, 3, 5, 8, 13 |
-| `Assignees` | Built-in | პასუხისმგებელი პირი |
-| `Labels` | Built-in | user-story, priority და role labels |
+| Status | Single Select | Backlog, Ready, In Progress, In Review, Done |
+| MoSCoW | Single Select | Must Have, Should Have, Could Have, Won't Have (this time) |
+| Story Points | Number | 1, 2, 3, 5, 8, 13 |
+| Assignees | Built-in | პასუხისმგებელი პირი |
+| Labels | Built-in | user-story, must-have, mobile-app, web-dashboard, backend-api და role labels |
 
-`MoSCoW` გამოყოფილია `Status`-ისგან: პრიორიტეტი უცვლელი შეიძლება იყოს, მაშინაც კი, როცა Story Backlog-იდან Done-მდე გადაადგილდება.
+MoSCoW პრიორიტეტი და Status სხვადასხვა კითხვას პასუხობს: MoSCoW — რამდენად მნიშვნელოვანია Story; Status — რა ეტაპზეა მისი შესრულება.
 
 ## 3. Views
 
 1. **Kanban Board** — Group by `Status`; ყოველდღიური სამუშაოს მართვა.
-2. **Product Backlog** — Table View; Group by `MoSCoW`, აჩვენებს სათაურს, ქულას, სტატუსსა და პასუხისმგებელ პირს.
-3. **MVP View** — Table ან Board ფილტრით `MoSCoW = Must Have`.
-4. **Future Scope** — ფილტრი `Could Have` ან `Won't Have`.
+2. **Product Backlog** — Table View; Group by `MoSCoW`; აჩვენებს Title, Status, Story Points, Assignees და Labels.
+3. **MVP View** — ფილტრი `MoSCoW = Must Have`; MVP-ის 10 Story / 39 SP.
+4. **Future Scope** — Should/Could/Won't კატეგორიები.
 
-## 4. WIP Limits — მიმდინარე სამუშაოს შეზღუდვა
+## 4. WIP Limits
 
-ინდივიდუალური მუშაობისას რეკომენდებული საწყისი ლიმიტებია:
+ინდივიდუალური მუშაობისთვის:
 
-- `In Progress`: მაქსიმუმ **1** Story ერთდროულად.
-- `In Review`: მაქსიმუმ **2** Story.
+- `In Progress`: მაქსიმუმ 1 Story.
+- `In Review`: მაქსიმუმ 2 Story.
 
-თუ Review-ში დაგროვდა სამუშაო, ახალი Story-ის დაწყების ნაცვლად ჯერ არსებული შემოწმება და დასრულება უნდა მოხდეს.
+თუ In Review-ში დაგროვდა სამუშაო, ახალი Story-ის დაწყებამდე ჯერ შემოწმება და დასრულება უნდა მოხდეს.
 
 ## 5. Definition of Ready
 
-Story `Ready` მდგომარეობაში გადადის მაშინ, როდესაც:
+Story გადადის Ready-ში, როდესაც:
 
-- აქვს User Story ფორმატი და გასაგები მომხმარებლის ღირებულება;
+- აქვს User Story ფორმატი და ღირებულება კონკრეტული როლისთვის;
 - აქვს Given/When/Then Acceptance Criteria;
-- მინიჭებული აქვს MoSCoW პრიორიტეტი და Fibonacci Story Points;
-- ცნობილია საჭირო მონაცემები, როლები და გარე დამოკიდებულებები;
-- Story საკმარისად მცირეა და მისი დასრულების შედეგი შემოწმებადია.
+- მინიჭებული აქვს MoSCoW და Fibonacci Story Points;
+- ცნობილია ტექნიკური/ბიზნეს დამოკიდებულებები;
+- საკმარისად მცირეა და დასრულების შედეგი შემოწმებადია;
+- საჭირო API/UX/მონაცემთა კონტრაქტი გასაგებია.
 
 ## 6. სამუშაოს ნაკადი
 
 ```mermaid
 flowchart LR
-    A[Backlog] --> B[Ready]
-    B --> C[In Progress]
-    C --> D[In Review]
-    D -->|კრიტერიუმი ვერ შესრულდა| C
-    D -->|ყველა DoD შესრულდა| E[Done]
+  A[Backlog] --> B[Ready]
+  B --> C[In Progress]
+  C --> D[In Review]
+  D -->|კრიტერიუმი ვერ შესრულდა| C
+  D -->|DoD შესრულდა| E[Done]
 ```
 
-Story არ გადადის `Done`-ში მხოლოდ იმიტომ, რომ კოდი დაიწერა. საჭიროა Acceptance Criteria-ს, ტესტებისა და Definition of Done-ის შესრულება.
+`Done` არ ნიშნავს მხოლოდ კოდის დაწერას. საჭიროა Acceptance Criteria, ტესტები, review, უსაფრთხოების შემოწმება და დოკუმენტაციის განახლება.
 
 ## 7. MVP-ის მართვა
 
-MVP მოიცავს 9 Must Have Story-ს და 31 Story Point-ს:
+MVP მოიცავს 10 Must Have Story-ს / 39 SP-ს:
 
-US-01, US-02, US-03, US-04, US-08, US-09, US-11, US-12 და US-13.
+`US-01, US-02, US-03, US-04, US-08, US-09, US-11, US-12, US-13, US-18`.
 
-ყველა Must Have Issue თავდაპირველად `Backlog`-ში რჩება. შემდეგ დამოკიდებულებების გათვალისწინებით მხოლოდ შემდეგი ერთი სამუშაო გადადის `Ready`-ში. `MoSCoW = Must Have` ავტომატურად არ ნიშნავს `Ready`-ს.
+ყველა Must Have თავდაპირველად Backlog-ში რჩება. Mobile-First არქიტექტურის გამო **US-18** არის პირველი ტექნიკური foundation Story და მისი დასრულების/Ready შეფასების შემდეგ იწყება US-01. შემდეგ Story-ები გადადის Ready-ში დამოკიდებულებებისა და რეალური შესაძლებლობის მიხედვით. MoSCoW = Must Have ავტომატურად Ready-ს არ ნიშნავს.
 
-## 8. Backlog Refinement და პროგრესის შეფასება
+## 8. Backlog Refinement
 
 კვირაში ერთხელ გადაიხედოს:
 
 - დასრულებული Story-ები და დარჩენილი Must Have ქულები;
-- დაბლოკილი ან გაურკვეველი Story-ები;
-- Story Points-ის შეფასების სიზუსტე;
-- ახალი იდეები, რომლებიც MVP-ის ფარგლებს არ უნდა გასცდეს.
+- დაბლოკილი/გაურკვეველი Story-ები;
+- Story Points-ის შეფასებები;
+- Mobile, Web და Backend-ის ტექნიკური დამოკიდებულებები;
+- ახალი მოთხოვნები, რომლებიც MVP-ის ფარგლებს არ უნდა გასცდეს.
 
-Scrum Sprint, Sprint Planning, Daily Scrum და Sprint Burndown ამ პროექტის არჩეული პროცესის ნაწილი არ არის. ამიტომ Project-ში `Sprint` Iteration ველი და `Sprint Planning` View საჭირო არ არის.
+## 9. რეკომენდებული Labels
 
-## 9. გამოყენებული Labels
-
-- `user-story`
-- `must-have`
-- `should-have`
-- `could-have`
-- `wont-have`
-- `role: მოქალაქე`
-- `role: მენეჯერი`
-- `role: თანამშრომელი`
-- `role: ადმინი`
-
-დამატებით შეიძლება `backend`, `frontend`, `database`, `security`, `testing` ტიპის ტექნიკური Labels.
+- საერთო: `user-story`, `must-have`, `should-have`, `could-have`, `wont-have`;
+- კლიენტი: `mobile-app`, `web-dashboard`;
+- სერვერი: `backend-api`, `database`, `security`, `file-storage`;
+- როლები: `role: მოქალაქე`, `role: მენეჯერი`, `role: თანამშრომელი`, `role: ადმინი`.
