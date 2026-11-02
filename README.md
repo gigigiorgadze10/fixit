@@ -1,9 +1,8 @@
-# FixIt — მუნიციპალური პრობლემების შეტყობინებისა და მართვის სისტემა
+# FixIt - მუნიციპალური პრობლემების შეტყობინებისა და მართვის სისტემა
 
 **საგანი:** DevOps and Software Engineering  
 **ავტორი:** გიგი გიორგაძე  
-**პროექტის ტიპი:** ინდივიდუალური Product Backlog და არქიტექტურის პროექტი  
-**არქიტექტურული სცენარი:** D — საკუთარი იდეა (ლექტორთან შეთანხმებით)
+**პროექტის ტიპი:** ინდივიდუალური Product Backlog და არქიტექტურის პროექტი
 
 [GitHub Repository](https://github.com/gigigiorgadze10/fixit) · [GitHub Projects](https://github.com/users/gigigiorgadze10/projects/1) · [Issues](https://github.com/gigigiorgadze10/fixit/issues)
 
