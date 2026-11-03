@@ -32,19 +32,98 @@ Identity-ისთვის ვიყენებთ ASP.NET Core Identity-ი�
 
 ```mermaid
 erDiagram
-  DEPARTMENTS ||--o{ APP_USERS : employs
-  DEPARTMENTS ||--o{ CATEGORIES : owns
-  DEPARTMENTS ||--o{ SERVICE_AREAS : serves
-  CATEGORIES ||--o{ REPORTS : classifies
-  SERVICE_AREAS ||--o{ REPORTS : contains
-  APP_USERS ||--o{ REPORTS : creates
-  REPORTS ||--o{ ASSIGNMENTS : has
-  APP_USERS ||--o{ ASSIGNMENTS : assigned_worker
-  APP_USERS ||--o{ ASSIGNMENTS : assigns
-  REPORTS ||--o{ REPORT_PHOTOS : has
-  APP_USERS ||--o{ REPORT_PHOTOS : uploads
-  REPORTS ||--o{ STATUS_HISTORY : records
-  APP_USERS ||--o{ STATUS_HISTORY : changes
+    DEPARTMENTS ||--o{ APP_USERS : employs
+    DEPARTMENTS ||--o{ CATEGORIES : owns
+    DEPARTMENTS ||--o{ SERVICE_AREAS : manages
+
+    CATEGORIES ||--o{ REPORTS : classifies
+    SERVICE_AREAS ||--o{ REPORTS : contains
+
+    APP_USERS ||--o{ REPORTS : creates
+
+    REPORTS ||--o{ ASSIGNMENTS : has
+    APP_USERS ||--o{ ASSIGNMENTS : works_on
+    APP_USERS ||--o{ ASSIGNMENTS : assigns
+
+    REPORTS ||--o{ REPORT_PHOTOS : contains
+    APP_USERS ||--o{ REPORT_PHOTOS : uploads
+
+    REPORTS ||--o{ STATUS_HISTORY : tracks
+    APP_USERS ||--o{ STATUS_HISTORY : changes
+
+    DEPARTMENTS {
+        bigint Id PK
+        varchar Name UK
+        boolean IsActive
+    }
+
+    APP_USERS {
+        uuid Id PK
+        varchar FullName
+        bigint DepartmentId FK
+        boolean IsActive
+    }
+
+    CATEGORIES {
+        bigint Id PK
+        bigint DepartmentId FK
+        varchar Name
+        boolean IsActive
+    }
+
+    SERVICE_AREAS {
+        bigint Id PK
+        bigint DepartmentId FK
+        varchar Name
+        geometry Boundary
+    }
+
+    REPORTS {
+        bigint Id PK
+        varchar Number UK
+        uuid ReporterId FK
+        bigint CategoryId FK
+        bigint ServiceAreaId FK
+        varchar Description
+        geometry Location
+        varchar Status
+        varchar RejectReason
+        bigint DuplicateOfId FK
+        timestamptz CreatedAt
+        timestamptz UpdatedAt
+    }
+
+    ASSIGNMENTS {
+        bigint Id PK
+        bigint ReportId FK
+        uuid WorkerId FK
+        uuid AssignedById FK
+        timestamptz AssignedAt
+        date DueDate
+        timestamptz EndedAt
+        varchar ReassignmentReason
+    }
+
+    REPORT_PHOTOS {
+        bigint Id PK
+        bigint ReportId FK
+        varchar Kind
+        varchar StorageKey UK
+        varchar MimeType
+        bigint SizeBytes
+        uuid UploadedById FK
+        timestamptz CreatedAt
+    }
+
+    STATUS_HISTORY {
+        bigint Id PK
+        bigint ReportId FK
+        varchar FromStatus
+        varchar ToStatus
+        uuid ChangedById FK
+        timestamptz ChangedAt
+        varchar Comment
+    }
 ```
 
 ## 4. მნიშვნელოვანი მონაცემთა წესები
