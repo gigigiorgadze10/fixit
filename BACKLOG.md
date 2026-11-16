@@ -82,7 +82,7 @@
 - **პლატფორმა:** mobile-app, backend-api
 - **დამოკიდებულება:** US-18
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-02: პრობლემის შეტყობინება კატეგორიით, აღწერით და ფოტოთი
 
@@ -119,7 +119,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 
 > HEIC ფორმატი (iPhone-ის ფოტოები) ამ ეტაპზე არ არის მხარდაჭერილი, რადგან მისი დამუშავება ცალკე ბიბლიოთეკას მოითხოვს; პირველი გაშვების შემდეგ შეიძლება ცალკე story-დ დაიგეგმოს.
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-03: პრობლემის ადგილმდებარეობის მითითება რუკაზე
 
@@ -154,7 +154,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **დამოკიდებულება:** US-02
 - **დაშლილია:** EPIC-1
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-04: ჩემი შეტყობინებების სია და სტატუსი
 
@@ -189,7 +189,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **დამოკიდებულება:** US-01, US-02
 - **დაშლილია:** EPIC-1
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-05: შეტყობინება სტატუსის ცვლილებისას
 
@@ -218,7 +218,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **პლატფორმა:** mobile-app, backend-api
 - **დამოკიდებულება:** US-04
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-06: პრობლემების საჯარო რუკა
 
@@ -247,7 +247,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **პლატფორმა:** mobile-app, web-dashboard, backend-api
 - **დამოკიდებულება:** US-02
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-07: არსებული შეტყობინების მხარდაჭერა ("მეც ვადასტურებ")
 
@@ -276,7 +276,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **პლატფორმა:** mobile-app, web-dashboard, backend-api
 - **დამოკიდებულება:** US-06
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-08: შემოსული შეტყობინებების სია ფილტრებით
 
@@ -310,7 +310,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **პლატფორმა:** web-dashboard, backend-api
 - **დამოკიდებულება:** არ არის
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-09: შეტყობინების მიღება და თანამშრომელზე მინიჭება/გადანაწილება
 
@@ -346,7 +346,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 
 > MVP-ში გადანაწილება შესაძლებელია მხოლოდ Accepted სტატუსში, სამუშაოს დაწყებამდე. InProgress/Resolved დავალების გადანაწილება მომავალი ცვლილების მოთხოვნაა.
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-10: შეტყობინების უარყოფა ან დუბლიკატად მონიშვნა
 
@@ -380,7 +380,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **პლატფორმა:** web-dashboard, backend-api
 - **დამოკიდებულება:** US-08
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-11: ჩემი ამოცანები და სტატუსის განახლება ადგილზე
 
@@ -410,7 +410,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **დამოკიდებულება:** US-09, US-18
 - **დაშლილია:** EPIC-2
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-12: სამუშაოს დასრულება ფოტოდადასტურებით
 
@@ -440,7 +440,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **დამოკიდებულება:** US-11
 - **დაშლილია:** EPIC-2
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-13: მომხმარებლების და როლების მართვა
 
@@ -474,7 +474,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **პლატფორმა:** web-dashboard, backend-api
 - **დამოკიდებულება:** არ არის
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-14: კატეგორიების და უწყებების მართვა
 
@@ -503,7 +503,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **პლატფორმა:** web-dashboard, backend-api
 - **დამოკიდებულება:** US-13
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-15: სტატისტიკის პანელი ხელმძღვანელობისთვის
 
@@ -532,7 +532,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **პლატფორმა:** web-dashboard, backend-api, database
 - **დამოკიდებულება:** US-08, US-09
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-16: გადაჭრის შეფასება მოქალაქის მიერ
 
@@ -563,7 +563,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 
 > ხელახლა გახსნა გამოყოფილია US-20-ში და ამ Story-ის ფარგლებს არ წარმოადგენს.
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-17: ანონიმური შეტყობინება
 
@@ -589,7 +589,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 
 > ამ ეტაპზე არ კეთდება: ანონიმურობა ზრდის სპამის და ყალბი შეტყობინებების რისკს, რაც მოდერაციის დამატებით სამუშაოს მოითხოვს.
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-18: Native Mobile App-ის საწყისი სტრუქტურა (Android/iOS)
 
@@ -625,7 +625,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 
 > ეს Story ქმნის Mobile App-ის ტექნიკურ საძირკველს: Expo project, navigation, typed API client და secure token storage. Citizen/Worker-ის ბიზნესფუნქციები აღწერილია US-01-დან US-12-მდე-ში. Push Notifications MVP-ში არ შედის.
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-19: პაროლის აღდგენა ელფოსტით
 
@@ -659,7 +659,7 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 - **პლატფორმა:** mobile-app, backend-api
 - **დამოკიდებულება:** US-01
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.
 
 ### US-20: პრობლემის ხელახლა გახსნის მოთხოვნა
 
@@ -695,4 +695,4 @@ Definition of Done: იხ. README, ნაწილი 6.4.
 
 > Future scope. Pending მოთხოვნის შექმნა Report-ის სტატუსს დაუყოვნებლივ არ ცვლის; მოთხოვნის განხილვა Manager-ის უფლებამოსილებაა.
 
-Definition of Done: იხ. README, ნაწილი 6.4.
+Definition of Done: იხ. README, ნაწილი 5.5.

@@ -41,7 +41,7 @@ def story_body(story: dict) -> str:
         lines.append(f"- **დაშლილია:** {story['split_from']}")
     if story.get("note"):
         lines += ["", f"> {story['note']}"]
-    lines += ["", "Definition of Done: იხ. README, ნაწილი 6.4."]
+    lines += ["", "Definition of Done: იხ. README, ნაწილი 5.5."]
     return "\n".join(lines).strip() + "\n"
 
 
