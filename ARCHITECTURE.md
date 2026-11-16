@@ -89,7 +89,7 @@ flowchart TB
 | სურათის დამუშავება | ImageSharp | ფორმატის შემოწმება, EXIF-ის წაშლა, შეკუმშვა |
 | ტესტები | xUnit + WebApplicationFactory, React Native Testing Library, Playwright, k6 | Backend, მობილური, ვები, დატვირთვა |
 | DevOps | Docker Compose, GitHub Actions, Dependabot | ერთნაირი ლოკალური გარემო, CI, დამოკიდებულებების განახლება |
-| მონიტორინგი | Application Insights, uptime მონიტორი | ლოგები, შეცდომები, ხელმისაწვდომობა (NFR-03) |
+| მონიტორინგი | Application Insights, uptime მონიტორი | ლოგები, შეცდომები, ხელმისაწვდომობა (NFR-02) |
 
 ვერსიები ფიქსირდება Sprint 0-ში იმ დღის stable გამოშვებებით; Expo-ს native პაკეტები ყენდება `npx expo install`-ით. Secrets (connection string, storage key) არ ინახება Git-ში: ლოკალურად `dotnet user-secrets`, CI-ში GitHub Secrets, Azure-ში App Settings.
 
@@ -117,7 +117,7 @@ flowchart TB
 ### 4.3 Design Patterns
 
 - **Service Layer / Use Case.** Controller არ შეიცავს ბიზნესლოგიკას: ამოწმებს DTO-ს, იძახებს Application Service-ს და აბრუნებს პასუხს. მაგალითად `AssignWorkerService` ამოწმებს სტატუსს, დისპეჩერის უწყებას და თანამშრომლის აქტიურობას.
-- **State Transition Policy.** `ReportStatusRules` ერთ ადგილას ინახავს დაშვებულ გადასვლებს (ნაწილი 6). აკრძალული გადასვლა აბრუნებს 409-ს.
+- **State Transition Policy.** `ReportStatusRules` ერთ ადგილას ინახავს დაშვებულ გადასვლებს (ნაწილი 8). აკრძალული გადასვლა აბრუნებს 409-ს.
 - **Unit of Work.** EF Core-ის ერთი `SaveChangesAsync` ინახავს Report-ის ცვლილებას და StatusHistory-ს ერთად. Generic Repository ყველა ცხრილისთვის არ იქმნება.
 - **Dependency Injection და ადაპტერები.** `IFileStorage` (ლოკალურად Azurite, production-ში Blob Storage) და `IEmailSender` (dev-ში sandbox, production-ში SMTP სერვისი) DI-ით მიეწოდება, ამიტომ ტესტებში ადვილად იცვლება.
 
@@ -146,15 +146,12 @@ Next.js პანელი იყოფა feature-ებად: `reports`, `ass
 
 ## 6. ავტორიზაცია და უსაფრთხოება
 
-- საჯარო რეგისტრაცია ქმნის მხოლოდ `Citizen` როლს; როლს request-იდან სერვერი არ იღებს.
-- მობილური იყენებს ASP.NET Core Identity-ის Bearer token-ს: მოკლევადიანი access token (1 სთ) და refresh token ინახება SecureStore-ში. ეს ტოკენი **JWT არ არის** (Identity-ის საკუთარი დაცული ფორმატია). თუ მომავალში გარე სისტემებს სტანდარტული OAuth2/OIDC დასჭირდება, დაემატება ცალკე Identity Provider.
-- ვები იყენებს Secure, HttpOnly, SameSite=Strict Cookie-ს და Anti-Forgery დაცვას ცვლილების მოთხოვნებზე.
-- Identity-ს Bearer და Cookie სქემები კონფიგურირდება (`AddIdentityApiEndpoints`), მაგრამ `MapIdentityApi` არ გამოიყენება, რადგან ის საჯარო `/register`-ს როლის გარეშე ხსნის. Endpoint-ები ჩვენს `AuthController`-შია.
-- პაროლი ≥ 8 სიმბოლო; 5 წარუმატებელი მცდელობის შემდეგ ანგარიში 15 წუთით იბლოკება (US-01).
-- Rate limiting: შესვლა და რეგისტრაცია ≤ 10 მოთხოვნა წუთში IP-ზე; განაცხადის შექმნა ≤ 10 საათში მომხმარებელზე.
-- ყოველი დაცული მოთხოვნა ამოწმებს როლსაც და რესურსის მფლობელობას ან უწყებასაც. ღილაკის დამალვა UI-ში უსაფრთხოების კონტროლი არ არის.
-- ფოტოს მუდმივი საჯარო ბმული არ არსებობს: API აბრუნებს SAS ბმულს, რომელიც 15 წუთში იწურება.
-- ლოგში არ იწერება პაროლი, ტოკენი, ელფოსტა, ტელეფონი და ზუსტი კოორდინატები.
+- საჯარო რეგისტრაცია ქმნის მხოლოდ `Citizen` როლს; დანარჩენ როლებს ანიჭებს Admin.
+- მობილური: ASP.NET Core Identity-ის Bearer token (access + refresh), ინახება SecureStore-ში. ეს ტოკენი JWT არ არის.
+- ვები: Secure, HttpOnly Cookie და Anti-Forgery დაცვა.
+- პაროლი ≥ 8 სიმბოლო; 5 წარუმატებელი მცდელობის შემდეგ ანგარიში 15 წუთით იბლოკება.
+- ყოველი დაცული მოთხოვნა ამოწმებს როლს და რესურსის მფლობელობას; ღილაკის დამალვა UI-ში დაცვა არ არის.
+- ფოტოს საჯარო ბმული არ არსებობს: API აბრუნებს 15-წუთიან SAS ბმულს.
 
 ## 7. REST API
 
@@ -191,66 +188,9 @@ Next.js პანელი იყოფა feature-ებად: `reports`, `ass
 | GET | `/admin/users` | Admin | მომხმარებლების სია | US-13 |
 | PATCH | `/admin/users/{id}/role` | Admin | როლი და უწყება | US-13 |
 | PATCH | `/admin/users/{id}/status` | Admin | ანგარიშის გათიშვა ან აღდგენა | US-13 |
-| GET | `/health` | საჯარო | ხელმისაწვდომობის შემოწმება (ბაზასთან კავშირით) | NFR-03 |
+| GET | `/health` | საჯარო | ხელმისაწვდომობის შემოწმება (ბაზასთან კავშირით) | NFR-02 |
 
-### 7.3 მთავარი მოთხოვნების მაგალითები
-
-**განაცხადის შექმნა** `POST /api/v1/reports` (`multipart/form-data`)
-
-| ველი | ტიპი | წესი |
-|---|---|---|
-| `categoryId` | integer | არსებული და აქტიური კატეგორია |
-| `description` | string | 10-500 სიმბოლო |
-| `latitude`, `longitude` | decimal | -90..90, -180..180; წერტილი მუნიციპალიტეტის საზღვარშია |
-| `photos` | file[] | 1-3 JPEG/PNG, თითო ≤ 10 MB |
-
-```json
-201 Created
-{ "id": 1042, "number": "FX-2026-001042", "status": "New", "createdAt": "2026-12-10T10:30:00Z" }
-```
-
-**მინიჭება** `POST /api/v1/manager/reports/{id}/assignment`
-
-```json
-{ "workerId": "8d0c...", "dueDate": "2026-12-15", "reason": "საწყისი მინიჭება" }
-
-200 OK
-{ "reportId": 1042, "status": "Accepted", "activeWorkerId": "8d0c...", "assignedAt": "2026-12-10T11:00:00Z" }
-```
-
-**დასრულება** `POST /api/v1/worker/tasks/{reportId}/completion` (`multipart/form-data`: `photo`, ერთი JPEG/PNG ≤ 10 MB; `comment`, არასავალდებულო, ≤ 500 სიმბოლო)
-
-```json
-200 OK
-{ "reportId": 1042, "status": "Resolved", "completionPhotoId": 987, "resolvedAt": "2026-12-12T15:00:00Z" }
-```
-
-### 7.4 HTTP კოდები
-
-| კოდი | როდის |
-|---|---|
-| 200 / 201 / 204 | წარმატება / შეიქმნა / წარმატება body-ის გარეშე |
-| 400 | ვალიდაციის შეცდომა |
-| 401 | არ არის ავტორიზებული |
-| 403 | როლი ან რესურსზე უფლება არ ჰყოფნის |
-| 404 | არ არსებობს, ან მომხმარებელმა მისი არსებობა არ უნდა იცოდეს |
-| 409 | დაუშვებელი სტატუსის გადასვლა ან პარალელური ცვლილება |
-| 413 / 415 | ფაილი დიდია / ფორმატი დაუშვებელია |
-| 429 | rate limit |
-
-### 7.5 MVP-ის შემდეგი endpoint-ები
-
-| Story | Endpoint |
-|---|---|
-| US-05 ელფოსტით შეტყობინების პარამეტრი | `PATCH /users/me/notification-preferences` |
-| US-06 საჯარო რუკა | `GET /map/reports?bbox=...&categoryId=...` (მხოლოდ Accepted, InProgress, Resolved; პერსონალური მონაცემების გარეშე) |
-| US-07 მხარდაჭერა | `POST` და `DELETE /reports/{id}/support` |
-| US-10 უარყოფა / დუბლიკატი | `PATCH /manager/reports/{id}/rejection` (`reason`, `duplicateOfId`) |
-| US-14 კატეგორიები და უწყებები | `/admin/categories`, `/admin/departments` |
-| US-15 სტატისტიკა | `GET /admin/analytics/summary`, `GET /admin/analytics/export.csv` |
-| US-16 შეფასება | `POST /reports/{id}/rating` |
-| US-19 პაროლის აღდგენა | `POST /auth/forgot-password`, `POST /auth/reset-password` |
-| US-20 ხელახლა გახსნა | `POST /reports/{id}/reopen-request`, `PATCH /manager/reopen-requests/{id}` |
+MVP-ის შემდეგი ფუნქციების endpoint-ები (US-05, 06, 07, 10, 14, 15, 16, 19, 20) დაემატება იმავე წესით, როცა შესაბამისი Story სპრინტში მოხვდება. შეცდომები ბრუნდება სტანდარტული HTTP კოდებით: 400 ვალიდაცია, 401/403 წვდომა, 404 არ არსებობს, 409 დაუშვებელი სტატუსის ცვლილება, 413/415 ფაილის ზომა ან ფორმატი.
 
 ## 8. სტატუსები და ბიზნესწესები
 
@@ -391,93 +331,7 @@ erDiagram
 6. მომხმარებელი არ იშლება, მხოლოდ ითიშება (`IsActive = false`), რომ ისტორია შენარჩუნდეს; Foreign Key-ები `ON DELETE RESTRICT`.
 7. საჯარო რუკის DTO არ შეიცავს ავტორს, კონტაქტს და `StorageKey`-ს.
 
-### 9.5 SQL სქემა (MVP)
-
-Identity-ის ცხრილები იქმნება Identity migration-ით. ქვემოთ მოცემულია ბიზნესცხრილები; საბოლოო სახეს EF Core migration იძლევა.
-
-```sql
-CREATE EXTENSION IF NOT EXISTS postgis;
-
-CREATE TABLE departments (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  name varchar(120) NOT NULL UNIQUE,
-  is_active boolean NOT NULL DEFAULT true
-);
-
-CREATE TABLE categories (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  department_id bigint NOT NULL REFERENCES departments(id),
-  name varchar(120) NOT NULL,
-  is_active boolean NOT NULL DEFAULT true,
-  UNIQUE (department_id, name)
-);
-
-CREATE TABLE service_areas (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  department_id bigint NOT NULL REFERENCES departments(id),
-  name varchar(120) NOT NULL,
-  boundary geometry(MultiPolygon, 4326) NOT NULL
-);
-
-CREATE TABLE reports (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  number varchar(32) NOT NULL UNIQUE,
-  reporter_id uuid NOT NULL REFERENCES "AspNetUsers"("Id"),
-  category_id bigint NOT NULL REFERENCES categories(id),
-  service_area_id bigint NOT NULL REFERENCES service_areas(id),
-  description varchar(500) NOT NULL CHECK (char_length(description) >= 10),
-  location geometry(Point, 4326) NOT NULL,
-  status varchar(16) NOT NULL DEFAULT 'New'
-    CHECK (status IN ('New', 'Accepted', 'InProgress', 'Resolved', 'Rejected')),
-  reject_reason varchar(500),
-  duplicate_of_id bigint REFERENCES reports(id),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  CHECK (status <> 'Rejected' OR reject_reason IS NOT NULL)
-);
-
-CREATE TABLE assignments (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  report_id bigint NOT NULL REFERENCES reports(id),
-  worker_id uuid NOT NULL REFERENCES "AspNetUsers"("Id"),
-  assigned_by_id uuid NOT NULL REFERENCES "AspNetUsers"("Id"),
-  assigned_at timestamptz NOT NULL DEFAULT now(),
-  due_date date,
-  ended_at timestamptz,
-  reassignment_reason varchar(500)
-);
-
-CREATE TABLE report_photos (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  report_id bigint NOT NULL REFERENCES reports(id),
-  kind varchar(16) NOT NULL CHECK (kind IN ('Submission', 'Completion')),
-  storage_key varchar(500) NOT NULL UNIQUE,
-  mime_type varchar(100) NOT NULL,
-  size_bytes bigint NOT NULL CHECK (size_bytes > 0 AND size_bytes <= 10485760),
-  uploaded_by_id uuid NOT NULL REFERENCES "AspNetUsers"("Id"),
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-
-CREATE TABLE status_history (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  report_id bigint NOT NULL REFERENCES reports(id),
-  from_status varchar(16),
-  to_status varchar(16) NOT NULL,
-  changed_by_id uuid NOT NULL REFERENCES "AspNetUsers"("Id"),
-  changed_at timestamptz NOT NULL DEFAULT now(),
-  comment varchar(500)
-);
-
-CREATE UNIQUE INDEX ux_assignments_one_active ON assignments(report_id) WHERE ended_at IS NULL;
-CREATE INDEX ix_assignments_worker_active ON assignments(worker_id, due_date) WHERE ended_at IS NULL;
-CREATE INDEX ix_reports_reporter_created ON reports(reporter_id, created_at DESC);
-CREATE INDEX ix_reports_status_category_created ON reports(status, category_id, created_at DESC);
-CREATE INDEX ix_status_history_report ON status_history(report_id, changed_at);
-CREATE INDEX ix_reports_location ON reports USING gist(location);
-CREATE INDEX ix_service_areas_boundary ON service_areas USING gist(boundary);
-```
-
-### 9.6 ფოტოების შენახვა
+### 9.5 ფოტოების შენახვა
 
 1. API ამოწმებს ზომას, magic bytes-ს და ფაილს ხსნის ImageSharp-ით; EXIF იშლება და ფოტო იკუმშება.
 2. ფაილი იტვირთება Blob Storage-ის private container-ში შემთხვევითი `StorageKey`-ით.
@@ -488,39 +342,8 @@ Blob Storage და PostgreSQL ერთ ACID ტრანზაქციაშ�
 
 ## 10. Deployment და DevOps
 
-| გარემო | სად | შემადგენლობა |
-|---|---|---|
-| ლოკალური | Docker Compose | PostgreSQL + PostGIS, Azurite, API; ვები `npm run dev`; მობილური Expo dev build |
-| staging | Azure | იგივე რაც production, მცირე ზომით; ყოველი merge `main`-ში ავტომატურად ეშვება |
-| production | Azure | ქვემოთ |
-
-**Production:**
-
-- API: Azure App Service Linux, Basic B1 (SLA 99.95%), Docker image.
-- ვებ-პანელი: Azure App Service (Node.js), იმავე დომენზე (`/api` proxy).
-- ბაზა: Azure Database for PostgreSQL Flexible Server, PostGIS extension, zonal high availability (SLA 99.95%), ავტომატური ბექაპი 7 დღე, point-in-time restore.
-- ფაილები: Azure Blob Storage, private container, SAS ბმულები.
-- მობილური: Expo EAS Build; Android APK შიდა გავრცელებით, iOS სიმულატორი დემოსთვის.
-- მონიტორინგი: Application Insights და uptime მონიტორი `/health`-ზე ყოველ წუთში.
-
-**ხელმისაწვდომობის გაანგარიშება (NFR-03):** API 99.95% × ბაზა 99.95% ≈ 99.90%, ანუ თვეში დაახლოებით 43 წუთი. ბაზა HA-ს გარეშე იძლევა მხოლოდ 99.9%-ს, რაც ჯამში 99.85%-ს (თვეში ≈ 65 წთ) ნიშნავს, ამიტომ production-ში zonal HA საჭიროა. staging-ს HA არ სჭირდება. Free და Shared App Service გეგმებს SLA არ აქვთ.
-
-**CI/CD (GitHub Actions):**
-
-1. Pull Request: .NET build და ტესტები, ვების lint/typecheck/test, მობილურის lint/typecheck/test, Dependabot და დამოკიდებულებების შემოწმება.
-2. Merge `main`-ში: Docker image, EF Core migration staging ბაზაზე, deploy staging-ზე.
-3. Production: ხელით დადასტურებით (GitHub Environment approval) Sprint Review-ს შემდეგ.
-
-## 11. არქიტექტურული რისკები
-
-| რისკი | შემცირება |
-|---|---|
-| Android/iOS-ის განსხვავებები | Expo SDK-ის ფიქსირებული ვერსიები, ტესტი რეალურ Android-ზე და iOS სიმულატორზე |
-| GPS-ის უზუსტობა ან ნებართვის უარყოფა | რუკაზე ხელით მონიშვნა, საზღვრის შემოწმება სერვერზე |
-| საცავისა და ბაზის შეუთანხმებლობა | ნაწილი 9.6: წაშლა შეცდომისას და ღამის cleanup |
-| პერსონალური მონაცემები ფოტოებში | EXIF-ის წაშლა, private container, 15-წუთიანი SAS, ლოგების გაფილტვრა |
-| ორი ავთენტიფიკაციის სქემა | endpoint-ების policy-ები სქემების მიხედვით; ვები იმავე origin-ზე proxy-ით |
-
-## 12. გაფართოების გზა
-
-MVP-ის შემდეგ: ელფოსტით და push-შეტყობინებები, საჯარო რუკა, სტატისტიკა, ხელახლა გახსნა, OIDC პროვაიდერი გარე ინტეგრაციებისთვის და, დატვირთვის ზრდისას, ცალკეული მოდულის სერვისად გამოყოფა. ეს MVP-ის ვალდებულება არ არის.
+- **ლოკალურად:** Docker Compose (PostgreSQL + PostGIS, Azurite), ვები `npm run dev`, მობილური Expo-ით.
+- **staging და production:** Azure. API და ვები App Service-ზე (Basic, SLA 99.95%), ბაზა PostgreSQL Flexible Server-ზე (zonal HA, SLA 99.95%, ავტომატური ბექაპი 7 დღე), ფოტოები Blob Storage-ში.
+- **ხელმისაწვდომობა (NFR-02):** 99.95% × 99.95% ≈ 99.9%, ანუ თვეში დაახლოებით 43 წუთი. ბაზა HA-ს გარეშე მხოლოდ 99.9%-ს იძლევა, რაც ჯამში ≈ 99.85%-ია, ამიტომ production-ში HA საჭიროა. Free/Shared გეგმებს SLA არ აქვთ.
+- **CI/CD (GitHub Actions):** ყოველ Pull Request-ზე build და ტესტები; merge `main`-ში აშვებს staging-ს; production ხელით, Sprint Review-ს შემდეგ.
+- **მობილური:** Android APK რეალურ ტელეფონზე, iOS სიმულატორი; App Store-ში გამოქვეყნება ფარგლებს გარეთაა.
