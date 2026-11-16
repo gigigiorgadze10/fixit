@@ -144,15 +144,15 @@ Story გადადის `Done`-ში მხოლოდ მაშინ, �
 
 | ველი | ტიპი | მნიშვნელობები |
 |---|---|---|
-| Status | Single select | Backlog, Ready, In Progress, In Review, Done |
-| Priority | Single select | Must have, Should have, Could have, Won't have |
+| Status | Single select | Backlog (ჯერ არ დაგეგმილა), Ready (აკმაყოფილებს Definition of Ready-ს), In Progress, In Review, Done (აკმაყოფილებს Definition of Done-ს) |
+| MoSCoW | Single select | Must have, Should have, Could have, Won't have |
 | Story Points | Number | 1, 2, 3, 5, 8 |
-| Sprint | Iteration | Sprint 0 - Sprint 5 (თარიღები 5.3-ში) |
+| Sprint | Iteration | Sprint 0 - Sprint 5 (თარიღები 5.3-ში); MVP-ის გარეთ დარჩენილ Story-ებს სპრინტი არ აქვს |
 
 | ხედი | დანიშნულება |
 |---|---|
-| Sprint Board | მიმდინარე სპრინტის დაფა (ფილტრი `sprint:@current`), სვეტები Status-ის მიხედვით |
-| Sprint Planning | მთელი Product Backlog ცხრილად: Status, Priority, Story Points, Sprint |
+| Sprint Board | დაფა სვეტებით Status-ის მიხედვით; მიმდინარე სპრინტისთვის ფილტრი `sprint:@current` |
+| Product Backlog | მთელი Backlog ცხრილად, დაჯგუფებული MoSCoW-ით: Status, Story Points, Sprint |
 
 Labels: `user-story`, `must-have`, `should-have`, `could-have`, `wont-have`, `role: მოქალაქე`, `role: მენეჯერი`, `role: თანამშრომელი`, `role: ადმინი`.
 
