@@ -103,12 +103,23 @@ Sprint 0 ერთკვირიანია, დანარჩენი ო�
 
 | Sprint | თარიღები | Sprint Goal | Story-ები | SP |
 |---|---|---|---|---:|
-| 0 | 16-22 ნოე | სამუშაო გარემო: მონორეპო (`api`, `web`, `mobile`), Docker Compose (PostgreSQL + PostGIS, Azurite), EF Core-ის პირველი migration და seed (უწყებები, კატეგორიები, მუნიციპალიტეტის საზღვარი, სატესტო ანგარიშები), `/health`, GitHub Actions CI, staging Azure-ზე, Next.js-ის ჩონჩხი | ტექნიკური სამუშაო | 0 |
+| 0 | 16-22 ნოე | სამუშაო გარემო მზადაა Sprint 1-ისთვის | task-ები #21-#26 (S0-1 ... S0-6) | 0 |
 | 1 | 23 ნოე - 6 დეკ | მობილური აპლიკაცია ეშვება და დაცულად უკავშირდება API-ს | US-18 | 8 |
 | 2 | 7-20 დეკ | მოქალაქე რეგისტრირდება და აგზავნის განაცხადს ფოტოთი | US-01, US-02 | 8 |
 | 3 | 21 დეკ - 3 იან | განაცხადს აქვს მდებარეობა; მოქალაქე ხედავს თავის სიას და ისტორიას | US-03, US-04 | 6 |
 | 4 | 4-17 იან | ადმინი ქმნის თანამშრომლებს; დისპეჩერი ხედავს განაცხადებს | US-13, US-08 | 8 |
 | 5 | 18-31 იან | **MVP:** მინიჭება, სამუშაოს დაწყება და დასრულება ფოტოთი | US-09, US-11, US-12 | 9 |
+
+**Sprint 0-ის task-ები** (ტექნიკური სამუშაო, Story Points-ის გარეშე, ლეიბლი `task`):
+
+| # | Task |
+|---|---|
+| [#21](https://github.com/gigigiorgadze10/fixit/issues/21) | S0-1: მონორეპოს სტრუქტურა (`api`, `web`, `mobile`) |
+| [#22](https://github.com/gigigiorgadze10/fixit/issues/22) | S0-2: Docker Compose: PostgreSQL + PostGIS და Azurite |
+| [#23](https://github.com/gigigiorgadze10/fixit/issues/23) | S0-3: ASP.NET Core API ჩონჩხი, EF Core, migration, seed, `/health` |
+| [#24](https://github.com/gigigiorgadze10/fixit/issues/24) | S0-4: Next.js ვებ-პანელის ჩონჩხი და `/api` proxy |
+| [#25](https://github.com/gigigiorgadze10/fixit/issues/25) | S0-5: GitHub Actions CI და Dependabot |
+| [#26](https://github.com/gigigiorgadze10/fixit/issues/26) | S0-6: staging გარემო Azure-ზე |
 
 Sprint 3 განზრახ მსუბუქია (საახალწლო დღეები). შემოწმება: Must have 8 + 8 + 6 + 8 + 9 = 39 SP. ყველა Story იგეგმება მხოლოდ მისი დამოკიდებულებების შემდეგ (ამას ამოწმებს `scripts/validate_backlog.py`).
 
@@ -151,10 +162,13 @@ Story გადადის `Done`-ში მხოლოდ მაშინ, �
 
 | ხედი | დანიშნულება |
 |---|---|
-| Sprint Board | დაფა სვეტებით Status-ის მიხედვით; მიმდინარე სპრინტისთვის ფილტრი `sprint:@current` |
-| Product Backlog | მთელი Backlog ცხრილად, დაჯგუფებული MoSCoW-ით: Status, Story Points, Sprint |
+| Sprint Board | Sprint Backlog: მხოლოდ მიმდინარე სპრინტი (შენახული ფილტრი `sprint:@current`), სვეტები Status-ით, ქულების ჯამი სვეტზე. ახალი სპრინტის დაწყებისას დაფა ავტომატურად იცვლება |
+| Product Backlog | მთელი Product Backlog ცხრილად, დაჯგუფებული MoSCoW-ით: Status, Story Points, Sprint |
+| Sprints | ყველა სპრინტი ცალკე ჯგუფად: თარიღები, Story-ები/task-ები და ქულების ჯამი |
 
-Labels: `user-story`, `must-have`, `should-have`, `could-have`, `wont-have`, `role: მოქალაქე`, `role: მენეჯერი`, `role: თანამშრომელი`, `role: ადმინი`.
+Project-ის აღწერაში (README) არის თითოეული სპრინტის Sprint Goal.
+
+Labels: `user-story`, `task`, `must-have`, `should-have`, `could-have`, `wont-have`, `role: მოქალაქე`, `role: მენეჯერი`, `role: თანამშრომელი`, `role: ადმინი`.
 
 ## 6. რისკები
 
