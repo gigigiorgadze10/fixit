@@ -186,7 +186,7 @@ bullet_block(s,8.80,1.65,3.75,4.85,'Web',[ 'Feature-based structure — reports,
 
 # Slide 9 — NFR and risks
 s = prs.slides.add_slide(BLANK); add_bg(s); header(s, '8. ხარისხი, უსაფრთხოება და რისკები', 'რიცხვითი მოთხოვნები უნდა დამტკიცდეს ტესტებით და არა ვარაუდით.', 9)
-bullet_block(s,0.75,1.60,5.75,4.95,'NFR სამიზნეები',[ '100 VU-ზე API GET p95 ≤ 2 წამი.', '100 VU-ზე error rate < 1%.', '1–3 JPEG/PNG ფოტო; თითოეული ≤ 10 MB.', 'Mobile ≥ 360 dp; Web ≥ 1024 CSS px.', 'დაცული API-ების 100%-ზე 401/403 და ownership ტესტები.' ],TEAL,13)
+bullet_block(s,0.75,1.60,5.75,4.95,'NFR სამიზნეები',[ '100 VU-ზე API GET p95 ≤ 2 წამი.', '100 VU-ზე error rate < 1%.', 'ხელმისაწვდომობა ≥ 99.9% თვეში; ბექაპი RPO ≤ 24 სთ.', '1-3 JPEG/PNG ფოტო; თითოეული ≤ 10 MB.', 'Mobile ≥ 360 dp; Web ≥ 1024 CSS px.', 'დაცული API-ების 100%-ზე 401/403 და ownership ტესტები.' ],TEAL,13)
 bullet_block(s,6.80,1.60,5.75,4.95,'ძირითადი რისკები',[ 'OS/device განსხვავება → Android/iOS smoke tests.', 'GPS შეცდომა → ხელით რუკაზე მონიშვნა + server geofence.', 'EXIF/privacy → metadata stripping + private storage.', 'Storage/DB failure → compensation + orphan cleanup.' ],ORANGE,13)
 
 # Slide 10 — stack and MVP
@@ -196,7 +196,7 @@ stack = [
     ('Web','Next.js App Router + TypeScript'),
     ('Backend','ASP.NET Core 10 Web API'),
     ('Data','EF Core 10 + PostgreSQL + PostGIS'),
-    ('Storage / Maps','Private S3-compatible storage; native/web map clients'),
+    ('Storage / Hosting','Azure Blob (private) + Azure App Service + PostgreSQL Flexible Server'),
     ('Testing / DevOps','xUnit, Playwright, RN Testing Library, k6; Docker + GitHub Actions'),
 ]
 for i,(a,b) in enumerate(stack):
@@ -205,7 +205,7 @@ for i,(a,b) in enumerate(stack):
     rect(s,3.15,yy,5.35,0.52,b,fill=PANEL,line=PANEL2,size=12,align=PP_ALIGN.LEFT)
 rect(s,9.0,1.75,3.15,1.25,'MVP\n10 Must Have Stories\n39 Story Points',fill=PANEL2,line=GREEN,size=18,bold=True)
 rect(s,9.0,3.35,3.15,1.05,'Full Backlog\n20 Stories / 74 SP',fill=PANEL2,line=ORANGE,size=17,bold=True)
-rect(s,9.0,4.75,3.15,1.05,'Push Notifications\nFuture scope',fill=PANEL2,line=PURPLE,size=15,bold=True)
+rect(s,9.0,4.75,3.15,1.05,'Scrum: 5 სპრინტი\nMVP: 31 იანვარი',fill=PANEL2,line=PURPLE,size=15,bold=True)
 
 # Slide 11 — references
 s = prs.slides.add_slide(BLANK); add_bg(s); header(s, 'ტექნიკური წყაროები', 'ტექნოლოგიური გადაწყვეტილებები დაფუძნებულია ოფიციალურ დოკუმენტაციაზე.', 11)
