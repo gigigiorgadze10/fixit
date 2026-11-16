@@ -1,0 +1,11 @@
+bin/
+obj/
+coverage/
+coverage-report/
+TestResults/
+*.user
+.vs/
+.vscode/
+.idea/
+.env
+node_modules/
