@@ -1,13 +1,17 @@
 namespace FixIt.Core;
 
+// დაშვებული სტატუსის ცვლილებები ერთ ადგილას.
 public static class ReportStatusRules
 {
+    private static readonly Dictionary<ReportStatus, ReportStatus[]> Allowed = new()
+    {
+        [ReportStatus.New] = new[] { ReportStatus.Accepted, ReportStatus.Rejected },
+        [ReportStatus.Accepted] = new[] { ReportStatus.InProgress },
+        [ReportStatus.InProgress] = new[] { ReportStatus.Resolved },
+    };
+
     public static bool CanChange(ReportStatus from, ReportStatus to)
     {
-        if (from == ReportStatus.New && to == ReportStatus.Accepted) return true;
-        if (from == ReportStatus.New && to == ReportStatus.Rejected) return true;
-        if (from == ReportStatus.Accepted && to == ReportStatus.InProgress) return true;
-        if (from == ReportStatus.InProgress && to == ReportStatus.Resolved) return true;
-        return false;
+        return Allowed.TryGetValue(from, out var next) && next.Contains(to);
     }
 }
